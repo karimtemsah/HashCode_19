@@ -42,7 +42,32 @@ def output(slides, filename):
     f.close()
 
 
+def minimize(verticals):
+    total_vers = []
+    done = []
+    for ver1 in range(len(verticals)):
+        init_list = [ver1, ver1]
+        for ver2 in range(ver1, len(verticals)):
+            if (len(verticals[ver1].get('tags').intersection(verticals[
+                                                                 ver2].get(
+                'tags')))) > (len(verticals[init_list[0]].get(
+                'tags').intersection(verticals[init_list[1]].get('tags')))) \
+                    and ver2 not in done:
+                init_list.pop()
+                init_list.append(ver2)
+        done.append(init_list[1])
+        total_vers.append(
+            {"id":[verticals[init_list[0]].get('id'), verticals[init_list[
+                1]].get('id')],
+             "tags": verticals[init_list[0]].get(
+                'tags').union(verticals[init_list[1]].get('tags'))})
+    return total_vers
+
+
+
 if __name__ == '__main__':
     horizontal, vertical = read_file("documents/e_shiny_selfies.txt")
-    slides = naive(horizontal, vertical)
-    output(slides, "output/naive_e.txt")
+    verticals_horizontal = minimize(vertical) + horizontal
+    print (verticals_horizontal[0])
+    # slides = naive(horizontal, vertical)
+    # output(slides, "output/naive_e.txt")
