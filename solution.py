@@ -30,6 +30,15 @@ def naive(horizontal, vertical):
 
     return slides
 
+def naive2(l1):
+    slides = []
+    for element in l1:
+        if(type(element.get('id'))==int):
+            slides.append([element.get('id')])
+        else:
+            slides.append(element.get('id'))
+    return slides
+
 
 def output(slides, filename):
     f = open(filename, 'w')
@@ -46,16 +55,16 @@ def minimize(verticals):
     total_vers = []
     done = []
     for ver1 in range(len(verticals)):
-        init_list = [ver1, ver1]
-        for ver2 in range(ver1, len(verticals)):
-            if (len(verticals[ver1].get('tags').intersection(verticals[
-                                                                 ver2].get(
-                'tags')))) > (len(verticals[init_list[0]].get(
-                'tags').intersection(verticals[init_list[1]].get('tags')))) \
-                    and ver2 not in done:
+        if ver1 not in done:
+            init_list = [ver1, ver1]
+        else:
+            continue
+        for ver2 in range(ver1+1, len(verticals)):
+            if ((len(verticals[ver1].get('tags').intersection(verticals[ver2].get('tags')))) < (len(verticals[init_list[0]].get('tags').intersection(verticals[init_list[1]].get('tags'))))) and ver2 not in done:
                 init_list.pop()
                 init_list.append(ver2)
         done.append(init_list[1])
+        print(len(done))
         total_vers.append(
             {"id":[verticals[init_list[0]].get('id'), verticals[init_list[
                 1]].get('id')],
@@ -63,11 +72,26 @@ def minimize(verticals):
                 'tags').union(verticals[init_list[1]].get('tags'))})
     return total_vers
 
+def naive3(l1):
+    slides = []
+    done = []
+    for var1 in range(len(l1)):
+        for var2 in range(var1+1, len(l1)):
+                        
+    for element in l1:
+        if(type(element.get('id'))==int):
+            slides.append([element.get('id')])
+        else:
+            slides.append(element.get('id'))
+    return slides
+
+
 
 
 if __name__ == '__main__':
-    horizontal, vertical = read_file("documents/e_shiny_selfies.txt")
+    horizontal, vertical = read_file("documents/c_memorable_moments.txt")
     verticals_horizontal = minimize(vertical) + horizontal
-    print (verticals_horizontal[0])
+    slides = naive2(verticals_horizontal)
+    print (slides)
     # slides = naive(horizontal, vertical)
-    # output(slides, "output/naive_e.txt")
+    output(slides, "output/naive_c.txt")
