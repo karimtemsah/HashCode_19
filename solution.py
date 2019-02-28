@@ -1,3 +1,5 @@
+import os
+
 
 def read_file(filename):
     # Horizontal/Vretical is a list of pictures in the format (id, set(tags))
@@ -43,6 +45,11 @@ def output(slides, filename):
 
 
 if __name__ == '__main__':
-    horizontal, vertical = read_file("documents/e_shiny_selfies.txt")
-    slides = naive(horizontal, vertical)
-    output(slides, "output/naive_e.txt")
+    for algo in [naive]:
+        if not os.path.exists("output/" + algo.__name__):
+            os.makedirs("output/" + algo.__name__)
+        for input_file in os.listdir('documents'):
+            if input_file.endswith('txt'):
+                horizontal, vertical = read_file("documents/" + input_file)
+                slides = algo(horizontal, vertical)
+                output(slides, "output/" + algo.__name__ + "/" + input_file[:-4] + ".out")
