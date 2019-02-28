@@ -64,7 +64,6 @@ def minimize(verticals):
                 init_list.pop()
                 init_list.append(ver2)
         done.append(init_list[1])
-        print(len(done))
         total_vers.append(
             {"id":[verticals[init_list[0]].get('id'), verticals[init_list[
                 1]].get('id')],
@@ -72,26 +71,65 @@ def minimize(verticals):
                 'tags').union(verticals[init_list[1]].get('tags'))})
     return total_vers
 
-def naive3(l1):
-    slides = []
-    done = []
-    for var1 in range(len(l1)):
-        for var2 in range(var1+1, len(l1)):
-                        
-    for element in l1:
-        if(type(element.get('id'))==int):
-            slides.append([element.get('id')])
-        else:
-            slides.append(element.get('id'))
+def appendSlide(slides,element):
+    if (type(element.get('id')) == int):
+        slides.append([element.get('id')])
+    else:
+        slides.append(element.get('id'))
+    #print(slides)
     return slides
+
+def sortMax(vh,slides,done,element):
+    slides = appendSlide(slides,vh[element])
+    done.append(element)
+    bestDif = 100
+    x = 0
+    while not x ==len(vh):
+        dif = ((len(vh[x].get('tags').intersection(vh[element].get('tags')))) - (len(vh[element].get('tags'))/2))
+        if (x not in done) and (dif == 0):
+            done.append(x)
+            appendSlide(slides, vh[x])
+            element = x
+            if len(done) == len(vh):
+                return slides
+            bestDif = 100
+            if len(done)%100 == 0:
+                output(slides, "output/naive_b.txt")
+            x = 0
+        elif (x not in done) and (abs(dif) < bestDif):
+            bestDif = abs(dif)
+            bestElement = x
+        x+=1
+        if x == len(vh):
+            done.append(bestElement)
+            appendSlide(slides, vh[bestElement])
+            element = bestElement
+            if len(done) == len(vh):
+                return slides
+            if len(done)%100 == 0:
+                output(slides, "output/naive_b.txt")
+            bestDif = 100
+            x = 0
+
+# def naive3(l1):
+#     slides = []
+#     done = []
+#     for var1 in range(len(l1)):
+#         for var2 in range(var1+1, len(l1)):
+#
+#     for element in l1:
+#         if(type(element.get('id'))==int):
+#             slides.append([element.get('id')])
+#         else:
+#             slides.append(element.get('id'))
+#     return slides
 
 
 
 
 if __name__ == '__main__':
-    horizontal, vertical = read_file("documents/c_memorable_moments.txt")
+    horizontal, vertical = read_file("documents/b.txt")
     verticals_horizontal = minimize(vertical) + horizontal
-    slides = naive2(verticals_horizontal)
-    print (slides)
+    slides = sortMax(verticals_horizontal,[],[],0)
     # slides = naive(horizontal, vertical)
-    output(slides, "output/naive_c.txt")
+    output(slides, "output/naive_b.txt")
